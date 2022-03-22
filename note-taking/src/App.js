@@ -1,10 +1,21 @@
  import './App.css';
  import { Header, Form, TextArea, Button, Input, Search } from 'semantic-ui-react';
+import { useState } from 'react';
 
 function App() {
 
+  const [note, setNote] = useState({tags: [], text: ''});
+  const {tags, text} = note;
+
+  const handleChange = (e, { name, value }) => {
+    setNote({ [name]: value });
+    console.log(note);
+  }
+
   const handleSubmit = () => {
-    console.log('submitted!');
+    const { tags, text } = note;
+    setNote({ tags: tags, text: text });
+    console.log(note);
   }
 
   return (
@@ -40,10 +51,17 @@ function App() {
               icon='tags'
               iconPosition='left'
               placeholder='Enter tags'
+              name='tags'
+              value={tags}
+              onChange={handleChange}
             />
+            {/* <Button onClick={handleChange}>Add Tag</Button> */}
           </Form.Field>
           <Form.Field>
-            <TextArea 
+            <TextArea
+              name='text'
+              value={text}
+              onChange={handleChange}
               rows={7} 
               placeholder="Take note..."
             />
