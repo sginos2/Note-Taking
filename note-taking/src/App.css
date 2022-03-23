@@ -1,9 +1,28 @@
-.title {
-  margin: 30px;
+.searchNotes {
+  margin-bottom: 10px;
+}
+
+.existingNotes {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.displayNotes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .App {
+  padding: 25px;
   text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .App-logo {

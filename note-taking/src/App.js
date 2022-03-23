@@ -1,74 +1,87 @@
  import './App.css';
- import { Header, Form, TextArea, Button, Input, Search } from 'semantic-ui-react';
+ import { Header, Form, TextArea, Button, Input, Search, Card, Label } from 'semantic-ui-react';
 import { useState } from 'react';
 
 function App() {
 
-  const [note, setNote] = useState({tags: [], text: ''});
-  const {tags, text} = note;
+  const [note, setNote] = useState({tag: '' , text: ''});
+  const {tag, text} = note;
+  var existingNotes = JSON.parse(localStorage.getItem('notes'))
 
-  const handleChange = (e, { name, value }) => {
-    setNote({ [name]: value });
-    console.log(note);
+  //fix tags so it can be an array of tags, not just one tag
+  const handleChangeTag = (e, { tag, value }) => {
+    setNote({ tag: value, text: text });
+  }
+
+  const handleChangeText = (e, { text, value }) => {
+    setNote({ tag: tag, text: value });
   }
 
   const handleSubmit = () => {
-    const { tags, text } = note;
-    setNote({ tags: tags, text: text });
-    console.log(note);
+    const { tag, text } = note;
+    setNote({ tag: tag, text: text });
+    if (existingNotes == null) {
+      existingNotes = [];
+    }
+    localStorage.setItem('note', JSON.stringify(note));
+    existingNotes.push(note);
+    localStorage.setItem('notes', JSON.stringify(existingNotes));
+    setNote({ tag: '', text: '' });
   }
 
   return (
-    <div className="App">
+    <div className='App'>
       {/* 
-        take notes--text field with submit button, submit button saves contents of note to local storage, probably display notes below text input box 
         tag notes--there's a tag input in semantic ui, so save the tag with the note in local storage?
-        search notes--simple search function that's not case-sensitive, uses the search term to search the strings of notes for words and returns the notes with those search terms
-
-        FOR SAVING NOTES: Save the note as an object. Inside the object have an array of tags, then a string with the note contents.
-        notes = [
-          {
-            tags: ['house', 'groceries', 'todo'],
-            text: 'buy groceries, clean the house'
-          },
-          {
-            tags: ['hotels', 'travel'],
-            text: 'hilton: $125/night, marriott: $106/night'
-          }
-        ]
-
+        search notes--simple search function that's not case-sensitive, uses the search term to search the strings of notes for words and returns the notes with those search terms. just search the note, not the tags
       */}
-      <div className='title'>
-        <Header as='h1'>Notes</Header>
-      </div>
-      <div className='searchNotes'>
-        <Search placeholder='Search Notes'/>
-      </div>
       <div className='createNote'>
-        <Form onSubmit={handleSubmit} style={{ margin: 50 }}>
+        <Header as='h3'>New Note</Header>
+        <Form onSubmit={handleSubmit} >
           <Form.Field>
             <Input
               icon='tags'
               iconPosition='left'
-              placeholder='Enter tags'
-              name='tags'
-              value={tags}
-              onChange={handleChange}
+              placeholder='Enter tag'
+              name='tag'
+              value={tag}
+              onChange={handleChangeTag}
             />
-            {/* <Button onClick={handleChange}>Add Tag</Button> */}
           </Form.Field>
           <Form.Field>
             <TextArea
               name='text'
               value={text}
-              onChange={handleChange}
+              onChange={handleChangeText}
               rows={7} 
-              placeholder="Take note..."
+              placeholder='Take note...'
             />
           </Form.Field>
           <Button type='submit'>Submit</Button>
         </Form>
       </div>
+      <div className='existingNotes'>
+        <div className='searchNotes'>
+          <Search placeholder='Search Notes'/>
+        </div>
+        <div className='displayNotes'>
+          {existingNotes !== null && (
+              <Card.Group centered>
+              {existingNotes.map((note) => (
+                <Card>
+                  <Card.Content>
+                    <Card.Description>{note.text}</Card.Description>
+                  </Card.Content>
+                  <Card.Content>
+                    <Label tag>{note.tag}</Label>
+                  </Card.Content>
+                </Card>
+              ))}
+              </Card.Group>
+          )}
+        </div>
+      </div>
+      
     </div>
   );
 }
