@@ -1,29 +1,27 @@
- import './App.css';
- import { Header, Form, TextArea, Button, Input, Search, Card, Label } from 'semantic-ui-react';
+import './App.css';
+import { Header, Form, TextArea, Button, Input, Card, Label, Search } from 'semantic-ui-react';
 import { useState } from 'react';
 
 function App() {
 
   const [note, setNote] = useState({tag: '' , text: ''});
   const {tag, text} = note;
+
   var existingNotes = JSON.parse(localStorage.getItem('notes'))
 
   //fix tags so it can be an array of tags, not just one tag
   const handleChangeTag = (e, { tag, value }) => {
-    setNote({ tag: value, text: text });
+    setNote({ ...note, tag: value, text: text });
   }
 
   const handleChangeText = (e, { text, value }) => {
-    setNote({ tag: tag, text: value });
+    setNote({ ...note, tag: tag, text: value });
   }
 
   const handleSubmit = () => {
-    const { tag, text } = note;
-    setNote({ tag: tag, text: text });
     if (existingNotes == null) {
       existingNotes = [];
     }
-    localStorage.setItem('note', JSON.stringify(note));
     existingNotes.push(note);
     localStorage.setItem('notes', JSON.stringify(existingNotes));
     setNote({ tag: '', text: '' });
@@ -31,10 +29,6 @@ function App() {
 
   return (
     <div className='App'>
-      {/* 
-        tag notes--there's a tag input in semantic ui, so save the tag with the note in local storage?
-        search notes--simple search function that's not case-sensitive, uses the search term to search the strings of notes for words and returns the notes with those search terms. just search the note, not the tags
-      */}
       <div className='createNote'>
         <Header as='h3'>New Note</Header>
         <Form onSubmit={handleSubmit} >
@@ -62,7 +56,7 @@ function App() {
       </div>
       <div className='existingNotes'>
         <div className='searchNotes'>
-          <Search placeholder='Search Notes'/>
+          <Search placeholder='Search Notes...'/>
         </div>
         <div className='displayNotes'>
           {existingNotes !== null && (
@@ -72,9 +66,11 @@ function App() {
                   <Card.Content>
                     <Card.Description>{note.text}</Card.Description>
                   </Card.Content>
-                  <Card.Content>
-                    <Label tag>{note.tag}</Label>
-                  </Card.Content>
+                  {note.tag && (
+                    <Card.Content>
+                      <Label tag>{note.tag}</Label>
+                    </Card.Content>
+                  )}
                 </Card>
               ))}
               </Card.Group>
